@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package session;
+
+import "proto/session/type/session.proto";
+
+option go_package = 
+  "github.com/fbriansyah/micro-payment-proto/protogen/go/session";
+
+service SessionService {
+  rpc CreateSession(UserID) returns (Session) {}
+  rpc RefreshToken(SessionID) returns (Session) {}
+  rpc DeleteSession(SessionID) returns (SessionID) {}
+  rpc GetUserIDFromToken(Token) returns (UserID) {}
+}
