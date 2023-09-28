@@ -1,0 +1,1 @@
+This proto project contain services and types for Micro Payment Service project.
