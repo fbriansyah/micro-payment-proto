@@ -33,6 +33,5 @@ message CreateUserResponse {
 
 service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse);
-  rpc Logout (session.SessionID) returns (session.SessionID);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
 }
