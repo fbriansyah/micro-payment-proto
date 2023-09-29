@@ -8,7 +8,6 @@ package auth
 
 import (
 	context "context"
-	session "github.com/fbriansyah/micro-payment-proto/protogen/go/session"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -21,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	AuthService_Login_FullMethodName      = "/payment.AuthService/Login"
-	AuthService_Logout_FullMethodName     = "/payment.AuthService/Logout"
 	AuthService_CreateUser_FullMethodName = "/payment.AuthService/CreateUser"
 )
 
@@ -30,7 +28,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	Logout(ctx context.Context, in *session.SessionID, opts ...grpc.CallOption) (*session.SessionID, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 }
 
@@ -51,15 +48,6 @@ func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	return out, nil
 }
 
-func (c *authServiceClient) Logout(ctx context.Context, in *session.SessionID, opts ...grpc.CallOption) (*session.SessionID, error) {
-	out := new(session.SessionID)
-	err := c.cc.Invoke(ctx, AuthService_Logout_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *authServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	out := new(CreateUserResponse)
 	err := c.cc.Invoke(ctx, AuthService_CreateUser_FullMethodName, in, out, opts...)
@@ -74,7 +62,6 @@ func (c *authServiceClient) CreateUser(ctx context.Context, in *CreateUserReques
 // for forward compatibility
 type AuthServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Logout(context.Context, *session.SessionID) (*session.SessionID, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
@@ -85,9 +72,6 @@ type UnimplementedAuthServiceServer struct {
 
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
-}
-func (UnimplementedAuthServiceServer) Logout(context.Context, *session.SessionID) (*session.SessionID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedAuthServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
@@ -123,24 +107,6 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(session.SessionID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).Logout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuthService_Logout_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).Logout(ctx, req.(*session.SessionID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AuthService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
@@ -169,10 +135,6 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _AuthService_Login_Handler,
-		},
-		{
-			MethodName: "Logout",
-			Handler:    _AuthService_Logout_Handler,
 		},
 		{
 			MethodName: "CreateUser",
