@@ -14,8 +14,8 @@ endif
 protoc-go:
 	@protoc --go_opt=module=${GO_MODULE} --go_out=. \
 	--go-grpc_opt=module=${GO_MODULE} --go-grpc_out=. \
-	./proto/payment/*.proto ./proto/authorization/*.proto  \
 	./proto/session/*.proto ./proto/session/type/*.proto \
+	./proto/payment/*.proto ./proto/authorization/*.proto  \
 
 .PHONY: build
 build: clean protoc-go

@@ -16,7 +16,7 @@ message LoginRequest {
 message LoginResponse {
   string userid=1 [json_name="userid"];
   string name=2 [json_name="name"];
-  Session session=3 [json_name="session"];
+  session.Session session=3 [json_name="session"];
 }
 
 message CreateUserRequest {
@@ -33,6 +33,6 @@ message CreateUserResponse {
 
 service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse);
-  rpc Logout (SessionID) returns (SessionID);
+  rpc Logout (session.SessionID) returns (session.SessionID);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
 }
