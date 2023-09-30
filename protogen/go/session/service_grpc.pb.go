@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SessionService_CreateSession_FullMethodName      = "/session.SessionService/CreateSession"
-	SessionService_RefreshToken_FullMethodName       = "/session.SessionService/RefreshToken"
-	SessionService_DeleteSession_FullMethodName      = "/session.SessionService/DeleteSession"
-	SessionService_GetUserIDFromToken_FullMethodName = "/session.SessionService/GetUserIDFromToken"
+	SessionService_CreateSession_FullMethodName       = "/session.SessionService/CreateSession"
+	SessionService_RefreshToken_FullMethodName        = "/session.SessionService/RefreshToken"
+	SessionService_DeleteSession_FullMethodName       = "/session.SessionService/DeleteSession"
+	SessionService_GetPayloadFromToken_FullMethodName = "/session.SessionService/GetPayloadFromToken"
 )
 
 // SessionServiceClient is the client API for SessionService service.
@@ -32,7 +32,7 @@ type SessionServiceClient interface {
 	CreateSession(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*Session, error)
 	RefreshToken(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*Session, error)
 	DeleteSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*SessionID, error)
-	GetUserIDFromToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*UserID, error)
+	GetPayloadFromToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Payload, error)
 }
 
 type sessionServiceClient struct {
@@ -70,9 +70,9 @@ func (c *sessionServiceClient) DeleteSession(ctx context.Context, in *SessionID,
 	return out, nil
 }
 
-func (c *sessionServiceClient) GetUserIDFromToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*UserID, error) {
-	out := new(UserID)
-	err := c.cc.Invoke(ctx, SessionService_GetUserIDFromToken_FullMethodName, in, out, opts...)
+func (c *sessionServiceClient) GetPayloadFromToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Payload, error) {
+	out := new(Payload)
+	err := c.cc.Invoke(ctx, SessionService_GetPayloadFromToken_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ type SessionServiceServer interface {
 	CreateSession(context.Context, *UserID) (*Session, error)
 	RefreshToken(context.Context, *SessionID) (*Session, error)
 	DeleteSession(context.Context, *SessionID) (*SessionID, error)
-	GetUserIDFromToken(context.Context, *Token) (*UserID, error)
+	GetPayloadFromToken(context.Context, *Token) (*Payload, error)
 	mustEmbedUnimplementedSessionServiceServer()
 }
 
@@ -103,8 +103,8 @@ func (UnimplementedSessionServiceServer) RefreshToken(context.Context, *SessionI
 func (UnimplementedSessionServiceServer) DeleteSession(context.Context, *SessionID) (*SessionID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
 }
-func (UnimplementedSessionServiceServer) GetUserIDFromToken(context.Context, *Token) (*UserID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserIDFromToken not implemented")
+func (UnimplementedSessionServiceServer) GetPayloadFromToken(context.Context, *Token) (*Payload, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPayloadFromToken not implemented")
 }
 func (UnimplementedSessionServiceServer) mustEmbedUnimplementedSessionServiceServer() {}
 
@@ -173,20 +173,20 @@ func _SessionService_DeleteSession_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SessionService_GetUserIDFromToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SessionService_GetPayloadFromToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Token)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SessionServiceServer).GetUserIDFromToken(ctx, in)
+		return srv.(SessionServiceServer).GetPayloadFromToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SessionService_GetUserIDFromToken_FullMethodName,
+		FullMethod: SessionService_GetPayloadFromToken_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SessionServiceServer).GetUserIDFromToken(ctx, req.(*Token))
+		return srv.(SessionServiceServer).GetPayloadFromToken(ctx, req.(*Token))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -211,8 +211,8 @@ var SessionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SessionService_DeleteSession_Handler,
 		},
 		{
-			MethodName: "GetUserIDFromToken",
-			Handler:    _SessionService_GetUserIDFromToken_Handler,
+			MethodName: "GetPayloadFromToken",
+			Handler:    _SessionService_GetPayloadFromToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
