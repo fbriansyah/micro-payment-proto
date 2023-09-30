@@ -11,5 +11,5 @@ service SessionService {
   rpc CreateSession(UserID) returns (Session) {}
   rpc RefreshToken(SessionID) returns (Session) {}
   rpc DeleteSession(SessionID) returns (SessionID) {}
-  rpc GetUserIDFromToken(Token) returns (UserID) {}
+  rpc GetPayloadFromToken(Token) returns (Payload) {}
 }

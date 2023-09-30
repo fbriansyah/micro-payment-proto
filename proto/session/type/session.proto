@@ -27,3 +27,7 @@ message SessionID {
 message Token {
   string access_token=1;
 }
+
+message Payload {
+  string user_id=1;
+}
