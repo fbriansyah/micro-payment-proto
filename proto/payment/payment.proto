@@ -26,6 +26,7 @@ message PaymentRequest {
   string bill_number=2 [json_name="bill_number"];
   string product_code=3 [json_name="product_code"];
   double amount=4 [json_name="amount"];
+  string inq_id=5 [json_name="inqID"]
 }
 
 message PaymentResponse {
