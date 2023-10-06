@@ -24,6 +24,7 @@ message InquiryResponse {
 message PaymentRequest {
   string user_id=1 [json_name="user_id"];
   string inq_id=2 [json_name="inq_id"];
+  double amount=3 [json_name="amount"];
 }
 
 message PaymentResponse {
