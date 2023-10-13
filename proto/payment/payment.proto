@@ -7,6 +7,11 @@ import "proto/google/type/datetime.proto";
 option go_package = 
   "github.com/fbriansyah/micro-payment-proto/protogen/go/payment";
 
+message DetailBill {
+  double base_amount=1 [json_name="base_amount"];
+  double fine_amount=2 [json_name="fine_amount"];
+}
+
 message InquiryRequest {
   string user_id=1 [json_name="user_id"];
   string bill_number=2 [json_name="bill_number"];
@@ -19,6 +24,7 @@ message InquiryResponse {
   string product_code=3 [json_name="product_code"];
   string name=4 [json_name="name"];
   double total_amount=5 [json_name="total_amount"];
+  DetailBill detail_bill=6 [json_name="detail_bill"];
 }
 
 message PaymentRequest {
@@ -35,6 +41,7 @@ message PaymentResponse {
   string refference_number=5 [json_name="refference_number"];
   google.type.DateTime transaction_datetime = 6 
     [json_name="transaction_datetime"];
+  DetailBill detail_bill=7 [json_name="detail_bill"];
 }
 
 service PaymentService {
