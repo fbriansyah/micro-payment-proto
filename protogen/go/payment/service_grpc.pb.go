@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.12.4
-// source: proto/payment/payment.proto
+// source: proto/payment/service.proto
 
 package payment
 
@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PaymentService_Inquiry_FullMethodName = "/payment.PaymentService/Inquiry"
-	PaymentService_Payment_FullMethodName = "/payment.PaymentService/Payment"
+	PaymentService_Inquiry_FullMethodName     = "/payment.PaymentService/Inquiry"
+	PaymentService_Payment_FullMethodName     = "/payment.PaymentService/Payment"
+	PaymentService_ListProduct_FullMethodName = "/payment.PaymentService/ListProduct"
+	PaymentService_GetBalance_FullMethodName  = "/payment.PaymentService/GetBalance"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -29,6 +31,8 @@ const (
 type PaymentServiceClient interface {
 	Inquiry(ctx context.Context, in *InquiryRequest, opts ...grpc.CallOption) (*InquiryResponse, error)
 	Payment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
+	ListProduct(ctx context.Context, in *ListProductRequest, opts ...grpc.CallOption) (PaymentService_ListProductClient, error)
+	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -57,12 +61,55 @@ func (c *paymentServiceClient) Payment(ctx context.Context, in *PaymentRequest, 
 	return out, nil
 }
 
+func (c *paymentServiceClient) ListProduct(ctx context.Context, in *ListProductRequest, opts ...grpc.CallOption) (PaymentService_ListProductClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PaymentService_ServiceDesc.Streams[0], PaymentService_ListProduct_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &paymentServiceListProductClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PaymentService_ListProductClient interface {
+	Recv() (*Product, error)
+	grpc.ClientStream
+}
+
+type paymentServiceListProductClient struct {
+	grpc.ClientStream
+}
+
+func (x *paymentServiceListProductClient) Recv() (*Product, error) {
+	m := new(Product)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *paymentServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error) {
+	out := new(GetBalanceResponse)
+	err := c.cc.Invoke(ctx, PaymentService_GetBalance_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility
 type PaymentServiceServer interface {
 	Inquiry(context.Context, *InquiryRequest) (*InquiryResponse, error)
 	Payment(context.Context, *PaymentRequest) (*PaymentResponse, error)
+	ListProduct(*ListProductRequest, PaymentService_ListProductServer) error
+	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -75,6 +122,12 @@ func (UnimplementedPaymentServiceServer) Inquiry(context.Context, *InquiryReques
 }
 func (UnimplementedPaymentServiceServer) Payment(context.Context, *PaymentRequest) (*PaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Payment not implemented")
+}
+func (UnimplementedPaymentServiceServer) ListProduct(*ListProductRequest, PaymentService_ListProductServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListProduct not implemented")
+}
+func (UnimplementedPaymentServiceServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 
@@ -125,6 +178,45 @@ func _PaymentService_Payment_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_ListProduct_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListProductRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PaymentServiceServer).ListProduct(m, &paymentServiceListProductServer{stream})
+}
+
+type PaymentService_ListProductServer interface {
+	Send(*Product) error
+	grpc.ServerStream
+}
+
+type paymentServiceListProductServer struct {
+	grpc.ServerStream
+}
+
+func (x *paymentServiceListProductServer) Send(m *Product) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _PaymentService_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).GetBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_GetBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).GetBalance(ctx, req.(*GetBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -140,7 +232,17 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Payment",
 			Handler:    _PaymentService_Payment_Handler,
 		},
+		{
+			MethodName: "GetBalance",
+			Handler:    _PaymentService_GetBalance_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/payment/payment.proto",
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ListProduct",
+			Handler:       _PaymentService_ListProduct_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "proto/payment/service.proto",
 }
