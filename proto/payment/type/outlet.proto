@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = 
+  "github.com/fbriansyah/micro-payment-proto/protogen/go/payment";
+
+message GetBalanceRequest {
+  string user_id=1 [json_name="user_id"];
+}
+
+message GetBalanceResponse {
+  double balance=1 [json_name="balance"];
+}

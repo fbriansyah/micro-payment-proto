@@ -1,3 +1,4 @@
+
 syntax = "proto3";
 
 package payment;
@@ -6,6 +7,7 @@ import "proto/google/type/datetime.proto";
 
 option go_package = 
   "github.com/fbriansyah/micro-payment-proto/protogen/go/payment";
+
 
 message DetailBill {
   double base_amount=1 [json_name="base_amount"];
@@ -41,10 +43,5 @@ message PaymentResponse {
   string refference_number=5 [json_name="refference_number"];
   google.type.DateTime transaction_datetime = 6 
     [json_name="transaction_datetime"];
-  DetailBill detail_bill=7 [json_name="detail_bill"];
 }
 
-service PaymentService {
-  rpc Inquiry(InquiryRequest) returns (InquiryResponse) {}
-  rpc Payment(PaymentRequest) returns (PaymentResponse) {}
-}

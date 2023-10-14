@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package payment;
+
+import "proto/payment/type/payment.proto";
+import "proto/payment/type/product.proto";
+import "proto/payment/type/outlet.proto";
+
+option go_package = 
+  "github.com/fbriansyah/micro-payment-proto/protogen/go/payment";
+
+
+service PaymentService {
+  rpc Inquiry(InquiryRequest) returns (InquiryResponse) {}
+  rpc Payment(PaymentRequest) returns (PaymentResponse) {}
+  rpc ListProduct(ListProductRequest) returns (stream Product) {}
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse){}
+}

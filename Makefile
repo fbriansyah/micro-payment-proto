@@ -15,7 +15,7 @@ protoc-go:
 	@protoc --go_opt=module=${GO_MODULE} --go_out=. \
 	--go-grpc_opt=module=${GO_MODULE} --go-grpc_out=. \
 	./proto/session/*.proto ./proto/session/type/*.proto \
-	./proto/payment/*.proto ./proto/authorization/*.proto  \
+	./proto/payment/*.proto ./proto/payment/type/*.proto ./proto/authorization/*.proto  \
 
 .PHONY: build
 build: clean protoc-go

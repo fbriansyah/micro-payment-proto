@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = 
+  "github.com/fbriansyah/micro-payment-proto/protogen/go/payment";
+
+message ListProductRequest {
+  int32 limit=1 [json_name="limit"];
+  int32 offset=2 [json_name="offset"];
+}
+
+message Product {
+  string code=1 [json_name="product_code"];
+  string name=2 [json_name="product_name"];
+}
